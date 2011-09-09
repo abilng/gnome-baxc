@@ -1,0 +1,145 @@
+#!/usr/bin/env python3.2
+#-*-python-3.2-
+####################################################################################
+#			BAXC--BAckground Xml Creater
+#-----------------------------------------------------------------------------------
+# 
+# Generates xml code for background slide show of gnome.
+#
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#Or see <http://www.gnu.org/licenses/>.
+#
+#Authors: Abil N George
+####################################################################################
+import argparse
+import os
+import string
+import datetime
+
+#parse processing
+def directory(string):
+	if os.path.isdir(string):
+		return string
+	else:
+	        raise argparse.ArgumentTypeError("%r is not a directory" %string)
+def xmlfile(string):
+	if string[-4:]=='.xml':
+		return string
+	else:
+	        raise argparse.ArgumentTypeError("%r is not a xmlfile" %string)
+
+
+parser = argparse.ArgumentParser(description='BAckground Xml Creater-Create background slide show file for gnome',prog='baxc')
+parser.add_argument('directory', type=directory,help='directory location of image files')
+parser.add_argument('-t','--time',dest='time',type=int,default=30,help='time duration(default: 30) in min',metavar='Time in min')
+parser.add_argument('-i','--interactive',help='for interactive session',dest='action',action='store_true',default=False)
+parser.add_argument('-o','--output',dest='path',type=xmlfile,default='background.xml',help='Output file(default value=background.xml)',metavar='Output file')
+args = parser.parse_args()
+
+#intitializing varables
+
+time = (args.time)*60.0-5
+path = os.path.abspath(args.directory)+'/'
+outfile=path+args.path
+s_date = datetime.date.today()
+dirs = os.listdir(path)
+dirs.sort()
+
+class image:
+	count=0
+	extentions=['.jpg','.png','.jpeg']
+	start=''
+
+def close():
+	if image.count==0:
+		os.remove(outfile)
+		print ('No jpg image on that dir(or u said \'not to add\')')
+	else:
+		print ('\n added'+str(image.count)+'image(s) \noutput file:'+outfile+'\n')
+		print ('load file by \n')
+		print ('GNOME 3:\" GSETTINGS_BACKEND=dconf gsettings set org.gnome.desktop.background picture-uri \'file://'+outfile+'\' \"\n')
+		print ('GNOME 2:\" gconftool -s \'/desktop/gnome/background/picture_filename\' \''+outfile+'\' -t string \"\n ')
+ 
+#finding is-image file
+def isimage(i):
+	for ext in image.extentions:
+		if i.find(ext) == -1:
+			pass
+		else:
+			return True
+	return False
+
+def ask_ok(prompt):
+	retries=2
+	complaint='Yes or no, please!'
+	while True:
+		ok = str(input(prompt))
+		if ok in ('y', 'ye', 'yes','Y'):
+			return True
+		elif ok in ('n', 'no', 'nop','N', 'nope'):
+			return False
+		retries = retries - 1
+		if retries < 0:
+			image.count=0
+			close()
+			raise IOError('refusenik user')
+		print (complaint)
+
+def add(i):
+	if image.count==0:
+		image.count=image.count+1
+		f.write(s1+i+s2+i+s3)
+		image.start=i
+	else:
+		s0='\n<to>'+path+i+'</to> \n</transition>'
+		f.write(s0+s1+i+s2+i+s3)
+		image.count=image.count+1
+
+def askadd(i):
+	if args.action==False :
+		add(i)
+	elif ask_ok('Add '+i+' ?:'):
+		add(i)
+#main program
+f=open(outfile,'w')
+f.write("""<background>
+  <starttime>
+    <year>"""+str(s_date.year)+"""</year>
+    <month>"""+str(s_date.month)+"""</month>
+    <day>"""+str(s_date.day)+"""</day>
+    <hour>00</hour>
+    <minute>00</minute>
+    <second>00</second>
+  </starttime>""")
+f.write('<!--this will start at midnight-->')
+s1="""<static>
+    <duration>"""+str(time)+"""</duration>
+    <file>"""+path
+s2="""</file>
+  </static>
+  <transition>
+    <duration>5.0</duration>
+    <from>"""+path
+s3='</from>'
+
+for i in dirs:
+	if isimage(i):
+		askadd(i)
+		
+f.write('\n<to>'+path+image.start+'</to>\n</transition>\n</background>')
+f.write('<!--Created by BAckground Xml Creater -->\n')
+f.close()
+close()
