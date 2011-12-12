@@ -1,10 +1,5 @@
 import os
 import string
-import msg
-path =os.getenv('HOME')+"/Pictures"
-path = os.path.abspath(path)+'/'
-dirs = os.listdir(path)
-dirs.sort()
 
 class image:
 	count=0
@@ -46,19 +41,19 @@ def ask_ok(prompt):
 			raise IOError('refusenik user')
 		print (complaint)
 
-def add(i):
+def add(i,path,f,x):
 	if image.count==0:
 		image.count=image.count+1
-		f.write(s1+i+s2+i+s3)
+		f.write(x.s1+i+x.s2+i+x.s3)
 		image.start=i
 	else:
 		s0='\n<to>'+path+i+'</to> \n</transition>'
-		f.write(s0+s1+i+s2+i+s3)
+		f.write(s0+x.s1+i+x.s2+i+x.s3)
 		image.count=image.count+1
 
-def askadd(i):
-	if args.action==False :
-		add(i)
+def askadd(i,action,path,ofile,x):
+	if action==False :
+		add(i,path,ofile,x)
 	elif ask_ok('Add '+i+' ?:'):
 		add(i)
 
