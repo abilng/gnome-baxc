@@ -39,8 +39,14 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.doubleSpinBox.setSingleStep (5.00)
 
 		self.gridLayout_8.addWidget(self.splitter_3, 2, 0, 1, 1)
+
+
 		self.splitter_2 = QtGui.QSplitter(self.centralwidget)
 		self.splitter_2.setOrientation(QtCore.Qt.Horizontal)
+		self.pushButton_1 = QtGui.QPushButton(self.splitter_2)
+		self.pushButton_1.setText(QtGui.QApplication.translate("MainWindow", "Mark All", None, QtGui.QApplication.UnicodeUTF8))
+		self.pushButton_2 = QtGui.QPushButton(self.splitter_2)
+		self.pushButton_2.setText(QtGui.QApplication.translate("MainWindow", "Unmark All", None, QtGui.QApplication.UnicodeUTF8))
 		self.pushButton_13 = QtGui.QPushButton(self.splitter_2)
 		self.pushButton_13.setText(QtGui.QApplication.translate("MainWindow", "Load images", None, QtGui.QApplication.UnicodeUTF8))
 		self.pushButton_15 = QtGui.QPushButton(self.splitter_2)
@@ -48,6 +54,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.pushButton_14 = QtGui.QPushButton(self.splitter_2)
 		self.pushButton_14.setText(QtGui.QApplication.translate("MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 		self.gridLayout_8.addWidget(self.splitter_2, 2, 1, 1, 1)
+			
+
 		self.scrollArea_6 = QtGui.QScrollArea(self.centralwidget)
 		self.scrollArea_6.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)		
 		self.scrollArea_6.setWidgetResizable(True)
@@ -88,6 +96,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		QtCore.QObject.connect(self.actionQuit, QtCore.SIGNAL(_fromUtf8("activated(int)")), self.close)
 		QtCore.QObject.connect(self.actionAbout,QtCore.SIGNAL("activated()"),self.About)
 		QtCore.QObject.connect(self.pushButton_13, QtCore.SIGNAL(_fromUtf8("clicked()")), self.dirsel)
+		QtCore.QObject.connect(self.pushButton_1, QtCore.SIGNAL(_fromUtf8("clicked()")), self.markall)
+		QtCore.QObject.connect(self.pushButton_2, QtCore.SIGNAL(_fromUtf8("clicked()")), self.unmarkall)
 		
 		QtCore.QMetaObject.connectSlotsByName(self)
 
@@ -120,6 +130,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.time=self.doubleSpinBox.value()
 		outfile=self.path+"background.xml"
 		x = xmlmsg.xml(self.path,(self.time)*60.0-5)
+		image.start=""
 		try:
 			f=open(outfile,'w')
 			f.write(x.start)
@@ -143,7 +154,13 @@ class Ui_MainWindow(QtGui.QMainWindow):
 			QtGui.QMessageBox.about(self,"XML File Created",xmlmsg.finalmsg(outfile,image.count))
 			self.close()
 				
+	def markall(self):
+		for i in self.image:
+			i.setCheckState(True)
 
+	def unmarkall(self):
+		for i in self.image:
+			i.setCheckState(False)
 
 	def About(self):
 		QtGui.QMessageBox.about(self,"About",xmlmsg.aboutmsg)
