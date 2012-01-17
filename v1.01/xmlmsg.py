@@ -16,9 +16,6 @@ p, li { white-space: pre-wrap; }\n
 """
 def finalmsg(outfile,count):
 	msg = '\n Added '+str(count)+'image(s).\nOutput file:'+outfile+'\n'
-	msg = msg +'\nload file by \n'
-	msg = msg +'\nGNOME 3:\" GSETTINGS_BACKEND=dconf gsettings set org.gnome.desktop.background picture-uri \'file://'+outfile+'\' \"\n'
-	msg = msg +'\nGNOME 2:\" gconftool -s \'/desktop/gnome/background/picture_filename\' \''+outfile+'\' -t string \"\n '
 	return msg
 
 class xml:

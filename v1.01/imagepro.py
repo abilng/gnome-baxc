@@ -6,16 +6,29 @@ class image:
 	extentions=['.jpg','.png','.jpeg']
 	start=None
 
+
+def load(outfile):
+	if os.system('gconftool -s \'/desktop/gnome/background/picture_filename\' \''+outfile+'\' -t string 2>/dev/null')== 0:
+		pass
+	else:
+		os.system('GSETTINGS_BACKEND=dconf gsettings set org.gnome.desktop.background picture-uri \'file://'+outfile+'\' 2>/dev/null')
+
+
+
 def close(outfile):
 	if image.count==0:
 		os.remove(outfile)
 		print ('No jpg image on that dir(or u said \'not to add\')')
 	else:
+		load(outfile)	
 		print ('\n added'+str(image.count)+'image(s) \noutput file:'+outfile+'\n')
-		print ('load file by \n')
+		print ('load(ed) file by \n')
 		print ('GNOME 3:\" GSETTINGS_BACKEND=dconf gsettings set org.gnome.desktop.background picture-uri \'file://'+outfile+'\' \"\n')
 		print ('GNOME 2:\" gconftool -s \'/desktop/gnome/background/picture_filename\' \''+outfile+'\' -t string \"\n ')
- 
+
+
+
+
 #finding is-image file
 def isimage(i):
 	for ext in image.extentions:
