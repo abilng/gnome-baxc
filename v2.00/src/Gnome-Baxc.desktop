@@ -1,0 +1,13 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Name=Gnome-Baxc
+GenericName=Gnome-BAckground Xml Creater
+Comment=Generates xml code for background slide show of gnome
+Version=1.01
+Type=Application
+Terminal=false
+Exec=gnome-baxc
+Name=Gnome-Baxc
+Icon=gnome-baxc
+Categories=Settings;
