@@ -8,10 +8,12 @@ class image:
 
 
 def load(outfile):
-	if os.system('gconftool -s \'/desktop/gnome/background/picture_filename\' \''+outfile+'\' -t string 2>/dev/null')== 0:
+	g3cmd='GSETTINGS_BACKEND=dconf gsettings set org.gnome.desktop.background picture-uri \'file://'+str(outfile)+'\' 2>/dev/null'
+	g2cmd='gconftool -s \'/desktop/gnome/background/picture_filename\' \''+str(outfile)+'\' -t string 2>/dev/null'
+	if os.system(g3cmd)== 0:
 		pass
 	else:
-		os.system('GSETTINGS_BACKEND=dconf gsettings set org.gnome.desktop.background picture-uri \'file://'+outfile+'\' 2>/dev/null')
+		os.system(g2cmd)
 
 
 
