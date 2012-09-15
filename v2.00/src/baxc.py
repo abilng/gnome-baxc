@@ -51,29 +51,22 @@ parser.add_argument('-D','--directory',type=directory,default=os.getenv('HOME')+
 
 args = parser.parse_args()
 if args.Cmd is False:
-	try:
-		#import PyQt4
-		from gui import main
-		main()
-	except ImportError:
-		print ('PyQt4 libary is not found\nTry command line Interface')
-		parser.print_help()
+	#try:
+	#import PyQt4
+	from gui import main
+	main()
+	#except ImportError:
+	#	print ('PyQt4 libary is not found\nTry command line Interface')
+	#	parser.print_help()
 else:
 	#intitializing varables
-	path = os.path.abspath(args.directory)+'/'
-	outfile=path+args.path
-	dirs = os.listdir(path)
-	dirs.sort()
-	#main program
-	import xmlmsg
 	from imagepro import *
-	x = xmlmsg.xml(path,(args.time)*60.0-5)
-	f=open(outfile,'w')
-	f.write(x.start)
-	for i in dirs:
-		if isimage(i):
-			askadd(i,args.action,path,f,x)
-	f.write("\n<to>"+path+image.start+x.end)
-	f.close()
-	close(outfile)
+	xmlcreator = xmlCreator()
+	xmlcreator.getimages(args.directory)
+	xml = xmlcreator.create_xml(args.time*60.0-5)
+	outfile = os.path.abspath(args.directory)+'/'+args.path
+	opfile=open(outfile,'w')
+	opfile.write(xml)
+	opfile.close()
+	xmlcreator.close(outfile)
 

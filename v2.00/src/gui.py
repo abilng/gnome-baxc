@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import xmlmsg
+
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QFileDialog
 from imagepro import *
@@ -95,6 +95,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 	def __init__(self,path):
 		super(Ui_MainWindow, self).__init__()
+		self.xmlcreator = xmlCreator()
 		self.setupUi(path)
 		self.show()	
 
@@ -118,32 +119,24 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 
 	def getselected(self):
-		self.time=self.doubleSpinBox.value()
+		time=self.doubleSpinBox.value()
 		outfile=self.path+"background.xml"
-		x = xmlmsg.xml(self.path,(self.time)*60.0-5)
-		image.start=""
-		try:
+		for image in self.image:
+			if image.checkState():
+				self.xmlcreator.addimage(self.path + image.text())
+
+		xml = self.xmlcreator.create_xml((time*60.0)-5)
+		try:	
 			f=open(outfile,'w')
-			f.write(x.start)
-			for j in self.image:
-				if j.checkState():
-					i=j.text()
-					if image.count==0:
-						image.count=image.count+1
-						f.write(x.s1+i+x.s2+i+x.s3)
-						image.start=i
-					else:
-						s0='\n<to>'+self.path+i+'</to> \n</transition>'
-						f.write(s0+x.s1+i+x.s2+i+x.s3)
-						image.count=image.count+1
-			f.write("\n<to>"+self.path+image.start+x.end)
+			f.write(xml)
 			f.close()
-			close(outfile)
+			self.xmlcreator.close(outfile)
 		except IOError as e:
-			QtGui.QMessageBox.critical(self,"IOError",e.__str__())
-		if image.count!=0:
-			QtGui.QMessageBox.about(self,"XML File Created",xmlmsg.finalmsg(outfile,image.count))
+			QtGui.QMessageBox.critical(self,"IOError",str(e))
+		if self.xmlcreator.getimagecount()!=0:
+			QtGui.QMessageBox.about(self,"XML File Created",finalmsg(outfile,self.xmlcreator.getimagecount()))
 			self.close()
+
 				
 	def markall(self):
 		for i in self.image:
@@ -154,7 +147,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 			i.setCheckState(False)
 
 	def About(self):
-		QtGui.QMessageBox.about(self,"About",xmlmsg.aboutmsg)
+		QtGui.QMessageBox.about(self,"About",aboutmsg)
 
 	def dirsel(self):
 		dirs = QFileDialog.getExistingDirectory(self, "Open Directory","/home",QFileDialog.ShowDirsOnly|QFileDialog.DontResolveSymlinks)
