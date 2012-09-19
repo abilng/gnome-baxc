@@ -89,6 +89,8 @@ class xmlCreator():
 	def create_xml(self, display_time, transition_time = 5):
 		xmldoc = Document()
 		background = xmldoc.createElement('background')
+		comment = xmldoc.createComment("Created by BAckground Xml Creater\n [https://github.com/abilng/gnome-baxc]")
+		xmldoc.appendChild(comment)		
 		xmldoc.appendChild(background)
 
 		starttime = xmldoc.createElement('starttime')
