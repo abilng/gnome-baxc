@@ -2,121 +2,118 @@
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QFileDialog
+from PyQt4.QtCore import QThread
 from imagepro import *
 
-try:
-	_fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-	_fromUtf8 = lambda s: s
-
 class Ui_MainWindow(QtGui.QMainWindow):	
+	
 	def setupUi(self,path):
-		self.setWindowTitle(QtGui.QApplication.translate("Gnome-BAXC", "Gnome-BAXC", None, QtGui.QApplication.UnicodeUTF8))
+		self.setWindowTitle("Gnome-BAXC")
 		self.resize(560, 512)
 		self.centralwidget = QtGui.QWidget(self)
-		self.gridLayout_9 = QtGui.QGridLayout(self.centralwidget)
-		self.gridLayout_8 = QtGui.QGridLayout()
-		self.label_6 = QtGui.QLabel(self.centralwidget)
-		self.label_6.setText(QtGui.QApplication.translate("MainWindow", "Select Images :", None, QtGui.QApplication.UnicodeUTF8))
-		self.gridLayout_8.addWidget(self.label_6, 0, 0, 1, 1)
-		self.splitter_3 = QtGui.QSplitter(self.centralwidget)
-		self.splitter_3.setOrientation(QtCore.Qt.Horizontal)
-		self.label_7 = QtGui.QLabel(self.splitter_3)
-		self.label_7.setText(QtGui.QApplication.translate("MainWindow", "Duration (in min) :", None, QtGui.QApplication.UnicodeUTF8))
+		self.mainLayout = QtGui.QGridLayout(self.centralwidget)
+		self.subLayout = QtGui.QGridLayout()
 
-		self.doubleSpinBox = QtGui.QDoubleSpinBox(self.splitter_3)
+		self.selectImageLabel = QtGui.QLabel("Select Images :", self.centralwidget)
+		self.subLayout.addWidget(self.selectImageLabel, 0, 0, 1, 1)
+		
+		self.durationSplitter = QtGui.QSplitter(self.centralwidget)
+		self.durationSplitter.setOrientation(QtCore.Qt.Horizontal)
+		self.durationLabel = QtGui.QLabel("Duration (in min) :", self.durationSplitter)
+		self.doubleSpinBox = QtGui.QDoubleSpinBox(self.durationSplitter)
 		self.doubleSpinBox.setMinimum(1.00)
 		self.doubleSpinBox.setValue(30.00)
 		self.doubleSpinBox.setSingleStep (5.00)
+		self.subLayout.addWidget(self.durationSplitter, 2, 0, 1, 1)
 
-		self.gridLayout_8.addWidget(self.splitter_3, 2, 0, 1, 1)
 
-
-		self.splitter_2 = QtGui.QSplitter(self.centralwidget)
-		self.splitter_2.setOrientation(QtCore.Qt.Horizontal)
-		self.pushButton_1 = QtGui.QPushButton(self.splitter_2)
-		self.pushButton_1.setText(QtGui.QApplication.translate("MainWindow", "Mark All", None, QtGui.QApplication.UnicodeUTF8))
-		self.pushButton_2 = QtGui.QPushButton(self.splitter_2)
-		self.pushButton_2.setText(QtGui.QApplication.translate("MainWindow", "Unmark All", None, QtGui.QApplication.UnicodeUTF8))
-		self.pushButton_13 = QtGui.QPushButton(self.splitter_2)
-		self.pushButton_13.setText(QtGui.QApplication.translate("MainWindow", "Load images", None, QtGui.QApplication.UnicodeUTF8))
-		self.pushButton_15 = QtGui.QPushButton(self.splitter_2)
-		self.pushButton_15.setText(QtGui.QApplication.translate("MainWindow", "Set Background", None, QtGui.QApplication.UnicodeUTF8))
-		self.pushButton_14 = QtGui.QPushButton(self.splitter_2)
-		self.pushButton_14.setText(QtGui.QApplication.translate("MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
-		self.gridLayout_8.addWidget(self.splitter_2, 2, 1, 1, 1)
+		self.btnSplitter = QtGui.QSplitter(self.centralwidget)
+		self.btnSplitter.setOrientation(QtCore.Qt.Horizontal)
+		self.markAllBtn = QtGui.QPushButton("Mark All", self.btnSplitter)
+		self.unmarkAllBtn = QtGui.QPushButton("Unmark All", self.btnSplitter)
+		self.loadBtn = QtGui.QPushButton("Load images", self.btnSplitter)
+		self.setBackgrdBtn = QtGui.QPushButton("Set Background" ,self.btnSplitter)
+		self.cancelBtn = QtGui.QPushButton("Cancel",self.btnSplitter)
+		self.subLayout.addWidget(self.btnSplitter, 2, 1, 1, 1)
 			
 
-		self.scrollArea_6 = QtGui.QScrollArea(self.centralwidget)
-		self.scrollArea_6.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)		
-		self.scrollArea_6.setWidgetResizable(True)
-		self.scrollAreaWidgetContents_7 = QtGui.QWidget()
-		self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 521, 396))
-		self.gridLayout_10 = QtGui.QGridLayout(self.scrollAreaWidgetContents_7)
-
+		self.imageScrollArea = QtGui.QScrollArea(self.centralwidget)
+		self.imageScrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)		
+		self.imageScrollArea.setWidgetResizable(True)
+		self.scrollAreaContents = QtGui.QWidget()
+		self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 521, 396))
+		
+		self.imageGrid = QtGui.QGridLayout(self.scrollAreaContents)
 		self.setcheckbox(path)
-
-		self.scrollArea_6.setWidget(self.scrollAreaWidgetContents_7)
-		self.gridLayout_8.addWidget(self.scrollArea_6, 1, 0, 1, 2)
-		self.gridLayout_9.addLayout(self.gridLayout_8, 0, 0, 1, 1)
+		self.imageScrollArea.setWidget(self.scrollAreaContents)
+		self.subLayout.addWidget(self.imageScrollArea, 1, 0, 1, 2)
+		
+		self.mainLayout.addLayout(self.subLayout, 0, 0, 1, 1)
+		
 		self.setCentralWidget(self.centralwidget)
+		
 		self.menubar = QtGui.QMenuBar(self)
-		self.menubar.setGeometry(QtCore.QRect(0, 0, 560, 21))
-		self.menuFile = QtGui.QMenu(self.menubar)
-		self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "&File", None, QtGui.QApplication.UnicodeUTF8))
-		self.menuHelp = QtGui.QMenu(self.menubar)
-		self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "&Help", None, QtGui.QApplication.UnicodeUTF8))
+		self.menuFile = QtGui.QMenu("&File", self.menubar)
+		self.menuHelp = QtGui.QMenu("&Help", self.menubar)
 		self.setMenuBar(self.menubar)
-		self.statusbar = QtGui.QStatusBar(self)
-		self.setStatusBar(self.statusbar)
-		self.actionQuit = QtGui.QAction(self)
-		self.actionQuit.setText(QtGui.QApplication.translate("MainWindow", "&Quit", None, QtGui.QApplication.UnicodeUTF8))
-		self.actionQuit.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Q", None, QtGui.QApplication.UnicodeUTF8))
-		self.actionQuit.setMenuRole(QtGui.QAction.QuitRole)
-		self.actionQuit.setSoftKeyRole(QtGui.QAction.NoSoftKey)
-		self.actionQuit.setPriority(QtGui.QAction.LowPriority)
-		self.actionAbout = QtGui.QAction(self)
-		self.actionAbout.setText(QtGui.QApplication.translate("MainWindow", "About", None, QtGui.QApplication.UnicodeUTF8))
+
+		self.actionQuit = QtGui.QAction("&Quit", self)
+		self.actionQuit.setShortcut( "Ctrl+Q")
+		self.actionAbout = QtGui.QAction("About", self)
 		self.menuFile.addAction(self.actionQuit)
 		self.menuHelp.addAction(self.actionAbout)
-		self.menubar.addAction(self.menuFile.menuAction())
-		self.menubar.addAction(self.menuHelp.menuAction())
-		QtCore.QObject.connect(self.pushButton_14, QtCore.SIGNAL(_fromUtf8("clicked()")), self.close)
-#remove self.pushButton_**  by action
-		QtCore.QObject.connect(self.pushButton_15, QtCore.SIGNAL(_fromUtf8("clicked()")), self.getselected)
-		QtCore.QObject.connect(self.actionQuit, QtCore.SIGNAL(_fromUtf8("activated(int)")), self.close)
-		QtCore.QObject.connect(self.actionAbout,QtCore.SIGNAL("activated()"),self.About)
-		QtCore.QObject.connect(self.pushButton_13, QtCore.SIGNAL(_fromUtf8("clicked()")), self.dirsel)
-		QtCore.QObject.connect(self.pushButton_1, QtCore.SIGNAL(_fromUtf8("clicked()")), self.markall)
-		QtCore.QObject.connect(self.pushButton_2, QtCore.SIGNAL(_fromUtf8("clicked()")), self.unmarkall)
 		
-		QtCore.QMetaObject.connectSlotsByName(self)
+		self.menubar.addMenu(self.menuFile)
+		self.menubar.addMenu(self.menuHelp)
+		
+		self.statusbar = QtGui.QStatusBar(self)
+		self.setStatusBar(self.statusbar)
+
+		self.setConnections()
+
+
 
 
 	def __init__(self,path):
 		super(Ui_MainWindow, self).__init__()
 		self.xmlcreator = xmlCreator()
+		self.initImageThread()
 		self.setupUi(path)
 		self.show()	
+
+	def setConnections(self):
+		QtCore.QObject.connect(self.cancelBtn, QtCore.SIGNAL("clicked()"), self.close)
+		QtCore.QObject.connect(self.setBackgrdBtn, QtCore.SIGNAL("clicked()"), self.getselected)
+		QtCore.QObject.connect(self.actionQuit, QtCore.SIGNAL("activated(int)"), self.close)
+		QtCore.QObject.connect(self.actionAbout,QtCore.SIGNAL("activated()"),self.About)
+		QtCore.QObject.connect(self.loadBtn, QtCore.SIGNAL("clicked()"), self.dirsel)
+		QtCore.QObject.connect(self.markAllBtn, QtCore.SIGNAL("clicked()"), self.markall)
+		QtCore.QObject.connect(self.unmarkAllBtn, QtCore.SIGNAL("clicked()"), self.unmarkall)
+		QtCore.QMetaObject.connectSlotsByName(self)
+
+	def initImageThread(self):
+		self.thread  = ReadTImage()
+		QtCore.QObject.connect(self.thread, QtCore.SIGNAL('started()'), self.startimageload)
+		QtCore.QObject.connect(self.thread, QtCore.SIGNAL('imageloaded(const QString&,QImage)'), self.imageloaded)
+		QtCore.QObject.connect(self.thread, QtCore.SIGNAL('finished()'), self.endimageload)
 
 
 	def setcheckbox(self,path):
 		self.image=list()
-		c=0
 		self.path=path+'/'
-		dirs = os.listdir(self.path)
-		dirs.sort()
-		for i in dirs:
-			if isimage(i):
-				self.image.append(QtGui.QCheckBox(self.scrollAreaWidgetContents_7))
-				self.image[c].setText(_fromUtf8(i))
-				icon = QtGui.QIcon()
-				icon.addPixmap(QtGui.QPixmap(_fromUtf8(self.path+i)), QtGui.QIcon.Normal, QtGui.QIcon.On)
-				self.image[c].setIcon(icon)
-				self.image[c].setIconSize(QtCore.QSize(150, 150))
-				self.gridLayout_10.addWidget(self.image[c], c+1, 0, 1, 1)
-				c=c+1
+		self.thread.setPath(self.path)
+		self.thread.start()
 
+
+	def imageloaded(self,text,icon_image):
+		index = len(self.image)
+		pix = QtGui.QPixmap.fromImage(icon_image)
+		icon = QtGui.QIcon(pix)
+		self.image.append(QtGui.QCheckBox(self.scrollAreaContents))
+		self.image[index].setText(text)
+		self.image[index].setIcon(icon)
+		self.image[index].setIconSize(QtCore.QSize(150, 150))
+		self.imageGrid.addWidget(self.image[index], index+1, 0, 1, 1)
 
 	def getselected(self):
 		time=self.doubleSpinBox.value()
@@ -154,17 +151,45 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		if dirs !="":
 			dirs = dirs+"/"
 			print (dirs)
-			for i in range(self.gridLayout_10.count()):
-				self.gridLayout_10.itemAt(i).widget().close()
+			for i in range(self.imageGrid.count()):
+				self.imageGrid.itemAt(i).widget().close()
 			self.image[:] = []
 			self.setcheckbox(dirs)
 
+	def startimageload(self):
+		self.statusbar.clearMessage()
+		self.statusbar.showMessage("Image loading ......")
 
-def main():
-	import sys
-	import os
-	path = os.getenv('HOME')+"/Pictures"
-	app = QtGui.QApplication(sys.argv)
-	ui = Ui_MainWindow(path)
-	sys.exit(app.exec_())
 
+	def endimageload(self):
+		self.statusbar.clearMessage()
+		self.statusbar.showMessage("Image loading finished",1000)
+
+
+class ReadTImage(QThread): 
+	def __init__(self, path = None): 
+		super().__init__() 
+		self.exiting = False
+		self.path = path
+
+	def setPath(self,path):
+		self.exiting = False
+		self.path = path
+
+	def run(self): 
+		dirs = os.listdir(self.path)
+		dirs.sort()
+		for filename in dirs:
+			if isimage(filename):
+				image = QtGui.QImage(self.path+filename)
+				self.emit(QtCore.SIGNAL('imageloaded(const QString&, QImage)'), filename, image)
+			else:
+				pass
+
+
+	def stop(self):
+		pass
+
+	def __del__(self):
+		self.exiting = True
+		self.wait()

@@ -52,12 +52,19 @@ parser.add_argument('-D','--directory',type=directory,default=os.getenv('HOME')+
 args = parser.parse_args()
 if args.Cmd is False:
 	#try:
-	#import PyQt4
-	from gui import main
-	main()
-	#except ImportError:
-	#	print ('PyQt4 libary is not found\nTry command line Interface')
-	#	parser.print_help()
+	from gui import Ui_MainWindow
+	from PyQt4 import QtGui
+	import sys
+	import os
+	dirpath = os.path.abspath(args.directory)
+	app = QtGui.QApplication(sys.argv)
+	ui = Ui_MainWindow(dirpath)
+	sys.exit(app.exec_())
+
+#		main()
+#	except ImportError:
+#		print ('PyQt4 libary is not found\nTry command line Interface')
+#		parser.print_help()
 else:
 	#intitializing varables
 	from imagepro import *
