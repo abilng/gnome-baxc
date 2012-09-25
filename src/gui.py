@@ -168,7 +168,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 class ReadTImage(QThread): 
 	def __init__(self, path = None): 
-		super().__init__() 
+		super(ReadTImage,self).__init__() 
 		self.exiting = False
 		self.path = path
 

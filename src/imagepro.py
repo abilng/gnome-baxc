@@ -30,16 +30,32 @@ def ask_ok(prompt):
 
 aboutmsg="""
 	<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n
-	<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n
+	<html><head><meta name=\"qrichtext\" content=\"1\" />
+	<style type=\"text/css\">\n
 	p, li { white-space: pre-wrap; }\n
-	</style></head><body style=\" font-family:\'Sans Serif\'; font-size:9pt; font-weight:400; font-style:normal;\">\n
-	<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; font-weight:600;\">Gnome-BAXC</span></p>\n
-	<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:600;\"></p>\n
-	<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\"baxc50.png\" />Version 1.01</p>\n
-	<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></p>\n
-	<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; font-weight:600;\">Gnome-BAXC </span><span style=\" font-size:11pt;\">(Gnome -</span><span style=\" font-size:11pt; font-weight:600;\">Ba</span><span style=\" font-size:11pt;\">ckground </span><span style=\" font-size:11pt; font-weight:600;\">X</span><span style=\" font-size:11pt;\">ML </span><span style=\" font-size:11pt; font-weight:600;\">C</span><span style=\" font-size:11pt;\">reator) generates xml code for background slide show of gnome.</span></p>\n
-	<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt;\"></p>\n
-	<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt;\"></p></body></html>
+	</style>
+	</head>
+	<body style=\" font-family:\'Sans Serif\'; font-size:9pt; font-weight:400; font-style:normal;\">\n
+	<p align=\"center\" 
+		style=\" margin-top:0px; margin-bottom:0px;	margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">
+	<span style=\" font-size:11pt; font-weight:600;\">Gnome-BAXC</span></p>\n
+	<p align=\"center\" 
+	style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
+	 -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:600;\"></p>\n
+	<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; 
+	-qt-block-indent:0; text-indent:0px;\"><img src=\"baxc50.png\" />Version 1.01</p>\n
+	<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; 
+	margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></p>\n
+	<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; 
+	text-indent:0px;\"><span style=\" font-size:11pt; font-weight:600;\">Gnome-BAXC </span>
+	<span style=\" font-size:11pt;\">(Gnome -</span><span style=\" font-size:11pt; font-weight:600;\">Ba</span>
+		<span style=\" font-size:11pt;\">ckground </span><span style=\" font-size:11pt; font-weight:600;\">X</span>
+		<span style=\" font-size:11pt;\">ML </span><span style=\" font-size:11pt; font-weight:600;\">C</span>
+		<span style=\" font-size:11pt;\">reator) generates xml code for background slide show of gnome.</span></p>\n
+	<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;
+	 -qt-block-indent:0; text-indent:0px; font-size:11pt;\"></p>\n
+	<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px;
+	 margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt;\"></p></body></html>
 	"""
 
 def finalmsg(outfile,count):
@@ -53,15 +69,15 @@ class xmlCreator():
 		self.images=list()
 
 	def load(self,outfile):
-		g3cmd='GSETTINGS_BACKEND=dconf gsettings set org.gnome.desktop.background picture-uri \'file://'+str(outfile)+'\' 2>/dev/null'
-		g2cmd='gconftool -s \'/desktop/gnome/background/picture_filename\' \''+str(outfile)+'\' -t string 2>/dev/null'
+		uri = 'file://' + outfile
+		g3cmd = 'gsettings set org.gnome.desktop.background picture-uri {uri}  2>/dev/null'.format(uri=uri)
+		g2cmd="gconftool-2 --type=string --set /desktop/gnome/background/picture_filename {img} -t string 2>/dev/null".format(img=outfile) 
 		print ("GNOME 3: "+ g3cmd)
 		print ("GNOME 2: "+ g2cmd)
 		if os.system(g3cmd) == 0:
 			pass
 		else:
 			os.system(g2cmd)
-
 	def close(self,outfile):
 		if len(self.images) == 0:
 			os.remove(outfile)
@@ -129,7 +145,7 @@ class xmlCreator():
 			static.appendChild(duration)
 
 			file = xmldoc.createElement('file')
-			file.appendChild(xmldoc.createTextNode(currentImage))
+			file.appendChild(xmldoc.createTextNode(str(currentImage)))
 			static.appendChild(file)
 
 			background.appendChild(static)
@@ -141,11 +157,11 @@ class xmlCreator():
 			transition.appendChild(duration)
 
 			transitionFrom = xmldoc.createElement('from')
-			transitionFrom.appendChild(xmldoc.createTextNode(currentImage))
+			transitionFrom.appendChild(xmldoc.createTextNode(str(currentImage)))
 			transition.appendChild(transitionFrom)
 
 			transitionTo = xmldoc.createElement('transitionTo')
-			transitionTo.appendChild(xmldoc.createTextNode(next))
+			transitionTo.appendChild(xmldoc.createTextNode(str(next)))
 			transition.appendChild(transitionTo)
 
 			background.appendChild(transition)
